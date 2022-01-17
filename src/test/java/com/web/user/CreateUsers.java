@@ -1,6 +1,6 @@
 package com.web.user;
 
-import com.db.user.MySqlCon;
+import com.db.user.MySQLConnection;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +34,6 @@ public class CreateUsers {
     String loginToken;
     String userMobileNumber;
     String userName;
-    String code;
     CreateUserPjo usersPjo = new CreateUserPjo();
     CreateUserPjo desUsers = new CreateUserPjo();
     CreateUserPjo updateInfoPjo = new CreateUserPjo();
@@ -49,20 +48,6 @@ public class CreateUsers {
         responseSpecBuilder.expectStatusCode(200);
         requestSpecification = requestSpecBuilder.build();
         responseSpecification = responseSpecBuilder.build();
-    }
-
-    @Test( priority = 3)
-    public void getConMethod() throws SQLException {
-
-        Connection con= DriverManager.getConnection(
-                "jdbc:mysql://172.16.3.33:3306/backend_api","root","m00bifun");
-        //here backend_api is database name, root is username and password
-        Statement stmt=con.createStatement();
-        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170824488");
-
-        while(rs.next())
-        code = rs.getString(3);
-        System.out.println(code);
     }
 
     @Test( priority = 1)
@@ -101,23 +86,25 @@ public class CreateUsers {
         System.out.println("My Mobile Number Value is: " + userMobileNumber);
     }
 
-    @Test( priority = 4)
+    @Test( priority = 3)
     public void confirmUsersMobile() throws SQLException {
     //calling the MySQL method to get the code value from database
-//        MySqlCon mySqlCon = new MySqlCon();
-//        String getCode = mySqlCon.code;
+        MySQLConnection mySqlCon = new MySQLConnection();
+        String code = mySqlCon.getCodeMethod();
     //Hashmap serialize
     HashMap<String, String> userMobile = new HashMap<>();
     userMobile.put("code",code);
     userMobile.put("type","web");
 
-      String confirmResponseBody = given().spec(requestSpecification).contentType(ContentType.JSON).body(userMobile).log().all().when().patch("/tokens/"+registeredToken+"/msisdns").
+      String confirmResponseBody = given().spec(requestSpecification).contentType(ContentType.JSON).body(userMobile).log().all().
+              when().patch("/tokens/"+registeredToken+"/msisdns").
             then().extract().response().asString();
         System.out.println(confirmResponseBody);
     }
 
-    @Test( priority = 5)
-    public void loginUser() throws JsonProcessingException {
+    @Test( priority = 4)
+    public void loginUser() throws JsonProcessingException, SQLException {
+
 
         // here I am using hashmap class to serialize the payload
         HashMap<String, String> userBody = new HashMap<>();
@@ -144,6 +131,10 @@ public class CreateUsers {
 
         //assert that message value is successfulLogin
         assertThat(message, equalTo("sucessfulLogin"));
+
+        MySQLConnection mySQLConnection = new MySQLConnection();
+        mySQLConnection.deleteDataMethod();
+
     }
 
 //    @Test
