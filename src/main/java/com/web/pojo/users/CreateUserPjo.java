@@ -3,13 +3,13 @@ package com.web.pojo.users;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UsersPjo {
+public class CreateUserPjo {
 
-    public UsersPjo(){
+    public CreateUserPjo(){
 
     }
 
-    public UsersPjo(String firstName,String lastName,String email,String mobileNumber,String operator,String password, String confirmPassword,String dateOfBirth,
+    public CreateUserPjo(String firstName,String lastName,String email,String mobileNumber,String operator,String password, String confirmPassword,String dateOfBirth,
                     String city,String country,String gender,String title,String username,String nationality,String nationalityId,String nationalityIdExpiry,
                     String passportNumber,int maximumAmountPlayable,String postalCode){
 
@@ -245,6 +245,16 @@ public class UsersPjo {
     private String message;
     private String code;
     private String type;
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    private String user;
 
 
     public String getCode() {

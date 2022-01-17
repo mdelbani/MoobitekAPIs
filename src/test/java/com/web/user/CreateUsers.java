@@ -1,14 +1,15 @@
 package com.web.user;
 
+import com.db.user.MySqlCon;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tp.pojo.pick3.PickPjo;
-import com.web.pojo.users.UsersPjo;
+import com.web.pojo.users.CreateUserPjo;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.filter.session.SessionFilter;
 import io.restassured.http.ContentType;
-import io.restassured.mapper.ObjectMapper;
-import io.restassured.mapper.ObjectMapperDeserializationContext;
-import io.restassured.mapper.ObjectMapperSerializationContext;
 import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
@@ -17,6 +18,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.PrintStream;
+import java.sql.*;
 import java.util.HashMap;
 
 import static io.restassured.RestAssured.*;
@@ -28,12 +30,18 @@ public class CreateUsers {
     RequestSpecification requestSpecification;
     ResponseSpecification responseSpecification;
     String registeredToken;
-    String password;
-    UsersPjo usersPjo = new UsersPjo();
-    UsersPjo desUsers = new UsersPjo();
+    String userPassword;
+    String loginToken;
+    String userMobileNumber;
+    String userName;
+    String code;
+    CreateUserPjo usersPjo = new CreateUserPjo();
+    CreateUserPjo desUsers = new CreateUserPjo();
+    CreateUserPjo updateInfoPjo = new CreateUserPjo();
+    CreateUserPjo confirmToken = new CreateUserPjo();
 
     @BeforeClass
-    public void beforeClass(){
+    public void beforeClass() {
 
         RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
         ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
@@ -43,63 +51,124 @@ public class CreateUsers {
         responseSpecification = responseSpecBuilder.build();
     }
 
-    @Test
-    public void checkUserServiceStatus(){
+    @Test( priority = 3)
+    public void getConMethod() throws SQLException {
+
+        Connection con= DriverManager.getConnection(
+                "jdbc:mysql://172.16.3.33:3306/backend_api","root","m00bifun");
+        //here backend_api is database name, root is username and password
+        Statement stmt=con.createStatement();
+        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170824488");
+
+        while(rs.next())
+        code = rs.getString(3);
+        System.out.println(code);
+    }
+
+    @Test( priority = 1)
+    public void checkUserServiceStatus() {
 
         // this test case is to check the service status of the user API
-        UsersPjo statusResponse = given().spec(requestSpecification).when().get("/status").then().spec(responseSpecification).extract().response().as(UsersPjo.class);
+        CreateUserPjo statusResponse = given().spec(requestSpecification).when().get("/status").then().spec(responseSpecification).extract().response().as(CreateUserPjo.class);
         assertThat(statusResponse.getMessage(), equalTo("statusAlive"));
+        System.out.println("The user service status is: "+statusResponse.getMessage());
 
     }
 
-    @Test
-    public void createWebUser(){
-
-        //SessionFilter session = new SessionFilter();
+    @Test( priority = 2)
+    public void createWebUser() {
 
         // this test case is to create a new user from web.
         // Pojo class used to serialize the payload body
-        usersPjo = new UsersPjo("test1","test1","test@example.com","96170808080","mtn","123456789",
-                "123456789","2000-01-09T20:10:10.709Z","beirut","lebanon","male","Mr","test2","lebanese",
-                "123456","2024-01-09T20:10:10.709Z","Rl 123456",0,"154875");
+        usersPjo = new CreateUserPjo("Mustapha", "Delbani", "mustapha.delbani@moobitek.com", "96170824488", "mtn", "mdelbani@82",
+                "mdelbani@82", "1982-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mdelbani", "lebanese",
+                "123456", "2024-01-09T20:10:10.709Z", "Rl 123456", 0, "154875");
 
         // deserialize the json response and convert it to Pojo class
         desUsers = given().spec(requestSpecification).body(usersPjo).contentType(ContentType.JSON).log().all()
-            .when().post("/users")
-                .then().spec(responseSpecification).log().all().extract().response().as(UsersPjo.class);
+                .when().post("/users")
+                .then().spec(responseSpecification).log().ifValidationFails().extract().response().as(CreateUserPjo.class);
 
         // assertion to ensure that the user created  successfully and to get the register token to use later on confirm registration
-        assertThat(desUsers.getMessage(), matchesPattern("userRegisteredSuccessfully"));
+        assertThat(desUsers.getMessage(), equalTo("userRegisteredSuccessfully"));
         //just create variables to save the token and password
         registeredToken = desUsers.getToken();
-        password = usersPjo.getPassword();
+        userPassword = usersPjo.getPassword();
+        userMobileNumber = usersPjo.getMobileNumber();
+        userName = usersPjo.getUsername();
         System.out.println("My Token Value is: " + registeredToken);
-        System.out.println("My Password Value is: " + password);
+        System.out.println("My Password Value is: " + userPassword);
+        System.out.println("My Mobile Number Value is: " + userMobileNumber);
     }
 
-    @Test
-    public void loginUser(){
+    @Test( priority = 4)
+    public void confirmUsersMobile() throws SQLException {
+    //calling the MySQL method to get the code value from database
+//        MySqlCon mySqlCon = new MySqlCon();
+//        String getCode = mySqlCon.code;
+    //Hashmap serialize
+    HashMap<String, String> userMobile = new HashMap<>();
+    userMobile.put("code",code);
+    userMobile.put("type","web");
 
-        // for now, I am using hashmap class to serialize the payload, but later I will try to use the same pjo class created above
+      String confirmResponseBody = given().spec(requestSpecification).contentType(ContentType.JSON).body(userMobile).log().all().when().patch("/tokens/"+registeredToken+"/msisdns").
+            then().extract().response().asString();
+        System.out.println(confirmResponseBody);
+    }
 
+    @Test( priority = 5)
+    public void loginUser() throws JsonProcessingException {
+
+        // here I am using hashmap class to serialize the payload
         HashMap<String, String> userBody = new HashMap<>();
 
-        userBody.put("password","P@ssw0rd");
-        userBody.put("type","web");
+        userBody.put("password",userPassword);
+        userBody.put("type", "web");
 
-           UsersPjo loginPjo = given().spec(requestSpecification).contentType( "application/problem+json; charset=utf-8").
-                        body(userBody).log().all().when().post("/usernames/mdelbani").
-                   then().spec(responseSpecification).log().all().extract().response().as(UsersPjo.class);
+        // here serializing the payload outside the rest assured library using the jackson object mapper class
+        ObjectMapper objectMapper = new ObjectMapper();
+        String mainObjectStr = objectMapper.writeValueAsString(userBody);
 
-//                assertThat(loginPjo.getMessage(), equalTo("sucessfulLogin"));
-//
-//                String loginToken = loginPjo.getToken();
-//                System.out.println(loginToken);
+        // parsed the response body to a response variable
+        String  response = given().spec(requestSpecification).log().all().contentType("application/problem+json; charset=utf-8").
+                body(mainObjectStr).when().post("/usernames/"+userName).
+                then().spec(responseSpecification).extract().response().asString();
+
+        System.out.println(response);
+
+        //Get JsonPath instance of above JSON string which is response
+        JsonPath jsonPath = new JsonPath(response);
+        //create a string variable to parse the message value
+        String message = jsonPath.getString("message");
+        loginToken = jsonPath.getString("token");
+
+        //assert that message value is successfulLogin
+        assertThat(message, equalTo("sucessfulLogin"));
     }
 
 //    @Test
-//    public void getUserInformation(){
+//    public void updateUserInfo(){
 //
-//        given().spec(requestSpecification).when().get("/tokens/{registeredToken}").then().statusCode(200).log().all();
+//
+//        updateInfoPjo = new CreateUserPjo("test1", "test1", "test@example.com", "96170808080", "mtn", "123456789",
+//                "123456789", "2000-01-09T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "test3", "lebanese",
+//                "123456", "2024-01-09T20:10:10.709Z", "Rl 123456", 0, "154875");
+//        String updateInfoStr =  given().spec(requestSpecification).contentType(ContentType.JSON).body(updateInfoPjo).log().all().when().put("/tokens/"+loginToken).then().extract().response().asString();
+//
+//        JsonPath jsonPath = new JsonPath(updateInfoStr);
+//        String message = jsonPath.getString("message");
+//
+//        System.out.println(updateInfoStr);
+//
 //    }
+
+//    @Test
+//    public void fetchWebUserInfo(){
+//
+//
+//    }
+//
+//
+
+
 }
