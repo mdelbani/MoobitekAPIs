@@ -1,4 +1,4 @@
-package com.tp.pojo.pick3;
+package Pick3PojoClasses;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotation;
 import com.fasterxml.jackson.annotation.JsonIgnore;

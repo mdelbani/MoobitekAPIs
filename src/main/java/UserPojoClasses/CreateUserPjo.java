@@ -1,9 +1,38 @@
-package com.web.pojo.users;
+package UserPojoClasses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateUserPjo {
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String mobileNumber;
+    private String operator;
+    private String password;
+    private String confirmPassword;
+    private String dateOfBirth;
+    private String city;
+    private String country;
+    private String gender;
+    private String title;
+    private String username;
+    private String district;
+    private String division;
+    private String nationality;
+    private String nationalityId;
+    private String nationalityIdExpiry;
+    private String passportNumber;
+    private String refugeeCardNumber;
+    private int maximumAmountPlayable;
+    private String address;
+    private String postalCode;
+    private String token;
+    private String message;
+    private String code;
+    private String type;
+    private String status;
+    private String user;
 
     public CreateUserPjo(){
 
@@ -218,34 +247,6 @@ public class CreateUserPjo {
         this.postalCode = postalCode;
     }
 
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String mobileNumber;
-    private String operator;
-    private String password;
-    private String confirmPassword;
-    private String dateOfBirth;
-    private String city;
-    private String country;
-    private String gender;
-    private String title;
-    private String username;
-    private String district;
-    private String division;
-    private String nationality;
-    private String nationalityId;
-    private String nationalityIdExpiry;
-    private String passportNumber;
-    private String refugeeCardNumber;
-    private int maximumAmountPlayable;
-    private String address;
-    private String postalCode;
-    private String token;
-    private String message;
-    private String code;
-    private String type;
-
     public String getUser() {
         return user;
     }
@@ -253,9 +254,6 @@ public class CreateUserPjo {
     public void setUser(String user) {
         this.user = user;
     }
-
-    private String user;
-
 
     public String getCode() {
         return code;
@@ -280,8 +278,6 @@ public class CreateUserPjo {
     public void setStatus(String status) {
         this.status = status;
     }
-
-    private String status;
 
     public String getToken() {
         return token;

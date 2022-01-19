@@ -1,20 +1,14 @@
 package com.tp.pick3;
 
 
-import com.tp.pojo.pick3.PickPjo;
+import Pick3PojoClasses.PickPjo;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
-import io.restassured.http.ContentType;
-import io.restassured.mapper.ObjectMapper;
-import io.restassured.mapper.ObjectMapperDeserializationContext;
-import io.restassured.mapper.ObjectMapperSerializationContext;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 
 import static io.restassured.RestAssured.*;
