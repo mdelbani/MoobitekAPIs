@@ -161,4 +161,9 @@ public class CreateUserE2E {
 
        System.out.println("Your user information has been fetched successfully");
     }
+
+    @Test(priority = 7)
+    public void testInfoUser(){
+
+    }
 }
