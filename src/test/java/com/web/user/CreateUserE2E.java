@@ -1,16 +1,17 @@
 package com.web.user;
 
 import MySQLDatabaseConnection.MySQLConnection;
-import UserPojoClasses.GetUserInfoPjo;
+import UserPojoClasses.FetchUser.GetUserInfoPjo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import UserPojoClasses.CreateUserPjo;
+import UserPojoClasses.CreateUser.CreateUserPjo;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
+import org.hamcrest.Matcher;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -61,9 +62,9 @@ public class CreateUserE2E {
     public void createWebUser() {
 
         // this test case is to create a new user from web. Pojo class used to serialize the payload body
-        usersPjo = new CreateUserPjo("Mustapha", "Delbani", "mustapha.delbani@moobitek.com", "96170824488", "mtn", "mdelbani@82",
-                "mdelbani@82", "1982-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mdelbani", "lebanese",
-                "123456", "2024-01-09T20:10:10.709Z", "Rl 123456", 0, "154875");
+        usersPjo = new CreateUserPjo("test", "test", "test@test.com", "96170000000", "mtn", "mmmtest@82",
+                "mmmtest@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mtest", "lebanese",
+                "123456", "2024-01-09T20:10:10.709Z", "Rl 1548796", 0, "321547");
 
         // deserialize the json response and convert it to Pojo class
         desUsers = given().spec(requestSpecification).body(usersPjo).contentType(ContentType.JSON).log().ifValidationFails()
@@ -85,7 +86,7 @@ public class CreateUserE2E {
     }
 
     @Test( priority = 3)
-    public void confirmUsersMobile() throws SQLException {
+    public void confirmUserMobile() throws SQLException {
     //create an instance of a MySQLConnection class to call the getCodeMethod which is returning the code from DB
         MySQLConnection mySqlCon = new MySQLConnection();
         String code = mySqlCon.getCodeMethod();
@@ -94,14 +95,13 @@ public class CreateUserE2E {
     userMobile.put("code",code);
     userMobile.put("type","web");
 
-      String confirmResponseBody = given().spec(requestSpecification).contentType(ContentType.JSON).body(userMobile).log().ifValidationFails().
+      GetUserInfoPjo confirmResponseBody = given().spec(requestSpecification).contentType(ContentType.JSON).body(userMobile).log().ifValidationFails().
               when().patch("/tokens/"+registeredToken+"/msisdns").
-              then().extract().response().asString();
-      //Extract the response body using JSON Path class
-      JsonPath js = new JsonPath(confirmResponseBody);
-      String confirmMessage = js.getString("message");
+              then().extract().response().as(GetUserInfoPjo.class);
+
+      String confirmMessage = confirmResponseBody.getMessage();
       assertThat(confirmMessage, equalTo("activationSuccessful"));
-        System.out.println("Here I get the code value from database directly and pass it as argument to the confirm API body"+code);
+      System.out.println("Here I get the code value from database directly and pass it as argument to the confirm API body"+code);
       System.out.println("Your Account has been activated successfully: "+confirmMessage);
     }
 
@@ -114,23 +114,14 @@ public class CreateUserE2E {
         userBody.put("password",userPassword);
         userBody.put("type", "web");
 
-        // here serializing the payload outside the rest assured library using the jackson object mapper class
-        ObjectMapper objectMapper = new ObjectMapper();
-        String mainObjectStr = objectMapper.writeValueAsString(userBody);
-
         // parsed the response body to a response variable
-        String  response = given().spec(requestSpecification).log().ifValidationFails().contentType("application/problem+json; charset=utf-8").
-                body(mainObjectStr).when().post("/usernames/"+userName).
-                then().spec(responseSpecification).extract().response().asString();
+        GetUserInfoPjo  loginResponse = given().spec(requestSpecification).log().ifValidationFails().contentType("application/problem+json; charset=utf-8").
+                body(userBody).when().post("/usernames/"+userName).
+                then().spec(responseSpecification).extract().response().as(GetUserInfoPjo.class);
 
-        //Get JsonPath instance of above JSON string which is response
-        JsonPath jsonPath = new JsonPath(response);
-        //create a string variable to parse the message value
-        String message = jsonPath.getString("message");
-        loginToken = jsonPath.getString("token");
-        //System.out.println(loginToken);
-        //assert that message value is successfulLogin
-        assertThat(message, equalTo("sucessfulLogin"));
+        String expectedResponseMessage = loginResponse.getMessage();
+        loginToken = loginResponse.getToken();
+        assertThat(expectedResponseMessage, equalTo("sucessfulLogin"));
         System.out.println("You have logged in successfully to your account");
 
     }
@@ -138,25 +129,25 @@ public class CreateUserE2E {
     @Test( priority = 5)
     public void updateUserInfo() throws SQLException, JsonProcessingException {
 
-        updateInfoPjo = new CreateUserPjo("Mustapha", "Delbani", "mustapha.delbani@moobitek.com", "96170824488", "mtn", "mdelbani@82",
-                "mdelbani@82", "1982-03-02T20:10:10.709Z", "beirut", "USA", "male", "Mr", "mdelbani", "lebanese",
-                "123456", "2024-01-09T20:10:10.709Z", "Rl 123456", 0, "112233");
-        String updateUserResponse =  given().spec(requestSpecification).contentType(ContentType.JSON).body(updateInfoPjo).log().ifValidationFails().
+        updateInfoPjo = new CreateUserPjo("test", "test", "test@test.com", "96170000000", "mtn", "test@82",
+                "test@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mtest", "lebanese",
+                "123456", "2024-01-09T20:10:10.709Z", "Rl 1548796", 0, "321547");
+
+        GetUserInfoPjo getUserInfoPjo =  given().spec(requestSpecification).contentType(ContentType.JSON).body(updateInfoPjo).log().ifValidationFails().
                 when().put("/tokens/"+loginToken).
-                then().extract().response().asString();
+                then().extract().response().as(GetUserInfoPjo.class);
 
         String ExpectedCountryName = updateInfoPjo.getCountry();
-        JsonPath jsonPath = new JsonPath(updateUserResponse);
-        String ActualCountryName = jsonPath.getString("user.country");
-
+        String ActualCountryName = getUserInfoPjo.getUser().getCountry();
         assertThat(ExpectedCountryName, equalTo(ActualCountryName));
-        System.out.println("You have updated your account successfully");
+
+        System.out.println("Your Account has been updated successfully");
 
         MySQLConnection mySQLConnection = new MySQLConnection();
         mySQLConnection.deleteDataMethod();
     }
 
-    @Test( priority = 6)
+    @Test( priority = 6 )
     public void fetchWebUserInfo(){
 
        GetUserInfoPjo fetchUserInfo =  given().spec(requestSpecification).

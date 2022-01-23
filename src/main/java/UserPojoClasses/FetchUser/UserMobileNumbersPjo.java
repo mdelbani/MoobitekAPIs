@@ -1,12 +1,11 @@
-package UserPojoClasses;
+package UserPojoClasses.FetchUser;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserMobileNumberPjo {
+public class UserMobileNumbersPjo {
 
-     public UserMobileNumberPjo() {
-
+    public UserMobileNumbersPjo(){
 
     }
 
@@ -14,6 +13,7 @@ public class UserMobileNumberPjo {
     private String value;
     private String operator;
     private String status;
+
 
     public String getId() {
         return id;

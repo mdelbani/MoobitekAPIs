@@ -1,19 +1,17 @@
-package UserPojoClasses;
+package UserPojoClasses.FetchUser;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserMobileNumbersPjo {
+public class UserEmailsInfoPjo {
 
-    public UserMobileNumbersPjo(){
+    public UserEmailsInfoPjo(){
 
     }
 
     private String id;
     private String value;
-    private String operator;
     private String status;
-
 
     public String getId() {
         return id;
@@ -31,14 +29,6 @@ public class UserMobileNumbersPjo {
         this.value = value;
     }
 
-    public String getOperator() {
-        return operator;
-    }
-
-    public void setOperator(String operator) {
-        this.operator = operator;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -46,5 +36,4 @@ public class UserMobileNumbersPjo {
     public void setStatus(String status) {
         this.status = status;
     }
-
 }

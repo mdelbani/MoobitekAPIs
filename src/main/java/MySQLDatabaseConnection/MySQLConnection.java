@@ -12,8 +12,6 @@ public class MySQLConnection<string> {
      static final String PASS = "m00bifun";
      static int UserId;
      static int PlayerId;
-     String deleteEmail = "Delete FROM backend_api.email where email = \"mustapha.delbani@moobitek.com\"";
-     String deleteUser = "Delete FROM backend_api.user where username = \"mdelbani\"";
 
     Connection conBackend = DriverManager.getConnection(DB_BackendAPI, USER, PASS);
     Connection conTpGame = DriverManager.getConnection(DB_TpGame, USER, PASS);
@@ -24,7 +22,7 @@ public class MySQLConnection<string> {
     public String getCodeMethod() throws SQLException {
 
         Statement stmt=conBackend.createStatement();
-        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170824488");
+        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170000000");
         while(rs.next())
         code = rs.getString(3);
         conBackend.close();
@@ -34,7 +32,7 @@ public class MySQLConnection<string> {
     public int getUserIdMethod() throws SQLException {
         //here backend_api is database name, root is username and password
         Statement stmt=conBackend.createStatement();
-        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170824488");
+        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170000000");
         while(rs.next())
         UserId = rs.getInt(1);
         //System.out.println(UserId);;
@@ -44,7 +42,7 @@ public class MySQLConnection<string> {
     public int getPlayerId() throws SQLException {
         //here backend_api is database name, root is username and password
         Statement stmt=conTpGame.createStatement();
-        ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170824488");
+        ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170000000");
         while(rs.next())
         PlayerId = rs.getInt(1);
         //System.out.println(PlayerId);
@@ -58,6 +56,8 @@ public class MySQLConnection<string> {
         String deleteExtendedWallet = "Delete From tpgame.extended_wallet where player_id ="+PlayerId;
         String deleteMobileNb = "Delete FROM backend_api.mobile_number where id ="+UserId;
         String deleteParticipant = "Delete FROM tpgame.participant where id ="+PlayerId;
+        String deleteEmail = "Delete FROM backend_api.email where email = \"test@test.com\"";
+        String deleteUser = "Delete FROM backend_api.user where username = \"mtest\"";
         try {
             Statement stmt = conBackend.createStatement();
             Statement stmt1 = conTpGame.createStatement();

@@ -1,4 +1,4 @@
-package UserPojoClasses;
+package UserPojoClasses.FetchUser;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
