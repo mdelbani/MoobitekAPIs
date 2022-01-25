@@ -157,7 +157,7 @@ public class CreateUserE2E {
        String fetchedMessageInfo = fetchUserInfo.getMessage();
        System.out.println(fetchedMessageInfo);
 
-       assertThat(fetchedMessageInfo, equalTo("userFetchedSuccessfull"));
+       assertThat(fetchedMessageInfo, equalTo("userFetchedSuccessfully"));
 
        System.out.println("Your user information has been fetched successfully");
     }
