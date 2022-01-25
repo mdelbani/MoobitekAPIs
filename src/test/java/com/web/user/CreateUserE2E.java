@@ -50,9 +50,9 @@ public class CreateUserE2E {
     public void checkUserServiceStatus() {
 
         // this test case is to check the service status of the user API
-//        CreateUserPjo statusResponse = given().spec(requestSpecification).
-//                when().get("/status").
-//                then().spec(responseSpecification).extract().response().as(CreateUserPjo.class);
+        CreateUserPjo statusResponse = given().spec(requestSpecification).
+                when().get("/status").
+                then().spec(responseSpecification).extract().response().as(CreateUserPjo.class);
         assertThat(statusResponse.getMessage(), equalTo("statusAlive"));
         System.out.println("The user service status is: "+statusResponse.getMessage());
 
