@@ -1,7 +1,6 @@
 package MySQLDatabaseConnection;
 
 import java.sql.*;
-import java.util.Arrays;
 
 public class MySQLConnection<string> {
      static String code;
@@ -12,11 +11,19 @@ public class MySQLConnection<string> {
      static final String PASS = "m00bifun";
      static int UserId;
      static int PlayerId;
+     static String Password;
+     static String UserName;
+     static int Balance;
+     static long TransactionId;
+     static long MSISDN;
 
     Connection conBackend = DriverManager.getConnection(DB_BackendAPI, USER, PASS);
     Connection conTpGame = DriverManager.getConnection(DB_TpGame, USER, PASS);
 
     public MySQLConnection() throws SQLException {
+        //this is how to decode base64 password
+//        byte[] decodedBytes = Base64.getDecoder().decode(userPassword);
+//        String decodedPassword = new String(decodedBytes);
     }
 
     public String getCodeMethod() throws SQLException {
@@ -49,6 +56,56 @@ public class MySQLConnection<string> {
         return PlayerId;
     }
 
+    public int getMSISDN() throws SQLException {
+        //here backend_api is database name, root is username and password
+        Statement stmt=conTpGame.createStatement();
+        ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170000000");
+        while(rs.next())
+            MSISDN = rs.getLong(1);
+        //System.out.println(PlayerId);
+        return (int) MSISDN;
+    }
+
+    public String getUserPassword() throws SQLException {
+        //here backend_api is database name, root is username and password
+        Statement stmt=conBackend.createStatement();
+        ResultSet rs=stmt.executeQuery("select * FROM backend_api.user where last_name = \"Delbani\"");
+        while(rs.next())
+            Password = rs.getString(22);
+        //System.out.println(Password);
+        return Password;
+    }
+
+    public String getUserName() throws SQLException {
+        //here backend_api is database name, root is username and password
+        Statement stmt=conBackend.createStatement();
+        ResultSet rs=stmt.executeQuery("select * FROM backend_api.user where last_name = \"Delbani\"");
+        while(rs.next())
+            UserName = rs.getString(4);
+        //System.out.println(PlayerId);
+        return UserName;
+    }
+
+    public int getBalance() throws SQLException {
+        //here backend_api is database name, root is username and password
+        Statement stmt=conTpGame.createStatement();
+        ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170824488");
+        while(rs.next())
+            Balance = rs.getInt(15);
+        //System.out.println(Balance);
+        return Balance;
+    }
+
+    public int getTransactionId() throws SQLException {
+        //here backend_api is database name, root is username and password
+        Statement stmt=conTpGame.createStatement();
+        ResultSet rs=stmt.executeQuery("SELECT * FROM tpgame.momo_funds_transaction where msisdn = 22196170824488 order by date_created desc");
+        while(rs.next())
+            TransactionId = rs.getLong(12);
+        //System.out.println(Balance);
+        return (int) TransactionId;
+    }
+
     public void deleteDataMethod() throws SQLException {
         getUserIdMethod();
         getPlayerId();
@@ -77,5 +134,7 @@ public class MySQLConnection<string> {
 
     public static void main(String[] args) throws SQLException {
 
+        MySQLConnection mySQLConnection = new MySQLConnection();
+        mySQLConnection.getUserPassword();
     }
 }

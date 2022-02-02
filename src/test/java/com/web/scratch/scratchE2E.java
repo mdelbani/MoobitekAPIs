@@ -1,4 +1,4 @@
-package com.tp.pick3;
+package com.web.scratch;
 
 
 import Pick3PojoClasses.PickPjo;
@@ -15,7 +15,7 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class ReqTicket {
+public class scratchE2E {
 
     RequestSpecification requestSpecification;
     ResponseSpecification responseSpecification;
