@@ -1,17 +1,14 @@
-package com.web.user;
+package com.webapi.user;
 
 import MySQLDatabaseConnection.MySQLConnection;
 import UserPojoClasses.FetchUser.GetUserInfoPjo;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import UserPojoClasses.CreateUser.CreateUserPjo;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
-import org.hamcrest.Matcher;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -95,13 +92,13 @@ public class CreateUserE2E {
     userMobile.put("code",code);
     userMobile.put("type","web");
 
-      GetUserInfoPjo confirmResponseBody = given().spec(requestSpecification).contentType(ContentType.JSON).body(userMobile).log().ifValidationFails().
+      GetUserInfoPjo confirmResponseBody = given().spec(requestSpecification).contentType(ContentType.JSON).
+              body(userMobile).log().ifValidationFails().
               when().patch("/tokens/"+registeredToken+"/msisdns").
               then().extract().response().as(GetUserInfoPjo.class);
 
       String confirmMessage = confirmResponseBody.getMessage();
       assertThat(confirmMessage, equalTo("activationSuccessful"));
-      System.out.println("Here I get the code value from database directly and pass it as argument to the confirm API body"+code);
       System.out.println("Your Account has been activated successfully: "+confirmMessage);
     }
 
@@ -115,7 +112,8 @@ public class CreateUserE2E {
         userBody.put("type", "web");
 
         // parsed the response body to a response variable
-        GetUserInfoPjo  loginResponse = given().spec(requestSpecification).log().ifValidationFails().contentType("application/problem+json; charset=utf-8").
+        GetUserInfoPjo  loginResponse = given().spec(requestSpecification).log().ifValidationFails().
+                contentType("application/problem+json; charset=utf-8").
                 body(userBody).when().post("/usernames/"+userName).
                 then().spec(responseSpecification).extract().response().as(GetUserInfoPjo.class);
 
@@ -129,11 +127,15 @@ public class CreateUserE2E {
     @Test( priority = 5)
     public void updateUserInfo() throws SQLException, JsonProcessingException {
 
-        updateInfoPjo = new CreateUserPjo("test", "test", "test@test.com", "96170000000", "mtn", "test@82",
-                "test@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mtest", "lebanese",
-                "123456", "2024-01-09T20:10:10.709Z", "Rl 1548796", 0, "321547");
+        updateInfoPjo = new CreateUserPjo("test", "test", "test@test.com",
+                "96170000000", "mtn", "test@82",
+                "test@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon",
+                "male", "Mr", "mtest", "lebanese",
+                "123456", "2024-01-09T20:10:10.709Z", "Rl 1548796",
+                0, "321547");
 
-        GetUserInfoPjo getUserInfoPjo =  given().spec(requestSpecification).contentType(ContentType.JSON).body(updateInfoPjo).log().ifValidationFails().
+        GetUserInfoPjo getUserInfoPjo =  given().spec(requestSpecification).contentType(ContentType.JSON).
+                body(updateInfoPjo).log().ifValidationFails().
                 when().put("/tokens/"+loginToken).
                 then().extract().response().as(GetUserInfoPjo.class);
 

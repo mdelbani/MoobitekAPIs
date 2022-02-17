@@ -92,7 +92,7 @@ public class MySQLConnection<string> {
         ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170824488");
         while(rs.next())
             Balance = rs.getInt(15);
-        //System.out.println(Balance);
+        System.out.println(Balance);
         return Balance;
     }
 
@@ -135,6 +135,6 @@ public class MySQLConnection<string> {
     public static void main(String[] args) throws SQLException {
 
         MySQLConnection mySQLConnection = new MySQLConnection();
-        mySQLConnection.getUserPassword();
+        mySQLConnection.getBalance();
     }
 }

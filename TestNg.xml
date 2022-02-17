@@ -1,23 +1,33 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite thread-count="1" verbose="1" name="API Suite" annotations="JDK" parallel="tests">
     <test name="Login From Web" >
-        <groups>
-            <run>
-                <include name="Login" />
-            </run>
-        </groups>
         <classes>
             <class name="com.common.LoginUser" />
         </classes>
     </test>
     <test name="Create User E2E" >
         <classes>
-            <class name="com.web.user.CreateUserE2E" />
+            <class name="com.webapi.user.CreateUserE2E" />
         </classes>
     </test>
     <test name="Wallet E2E" >
         <classes>
-            <class name="com.web.wallet.WalletWebE2E" />
+            <class name="com.webapi.wallet.WalletWebE2E" />
+        </classes>
+    </test>
+    <test name="Pick 3 E2E" >
+        <classes>
+            <class name="com.webapi.pick3.Pick3WebE2E" />
+        </classes>
+    </test>
+    <test name="Scratch E2E" >
+        <classes>
+            <class name="com.webapi.scratch.scratchE2E" />
+        </classes>
+    </test>
+    <test name="Pick X E2E" >
+        <classes>
+            <class name="com.webapi.pickx.PickaxE2E" />
         </classes>
     </test>
 </suite>

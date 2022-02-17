@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Login">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../IdeaProjects/MoobitekLogin" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../IdeaProjects/MoobitekLogin/src/main/java" />
+      <root url="file://$PROJECT_DIR$/../IdeaProjects/MoobitekLogin/src/test/java" />
+    </SOURCES>
+  </library>
+</component>
