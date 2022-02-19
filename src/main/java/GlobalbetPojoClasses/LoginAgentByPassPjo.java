@@ -6,31 +6,32 @@ import javax.xml.bind.annotation.*;
 @XmlType(name = "", propOrder = {"Login","Password","Authorization"})
 //here I just identify the root element of the xml body
 @XmlRootElement(name = "LoginAgentByPasswordRequest")
-public class GlobalbetPjo {
+public class LoginAgentByPassPjo {
 
     @XmlElement(name = "Login", required = true)
     private String Login;
     @XmlElement(name = "Password", required = true)
     private String Password;
     @XmlElement(name = "Authorization", required = true)
-    private AuthorizationPjo Authorization;
+    private GlobalBetAuthorizationPjo Authorization;
 
-    public GlobalbetPjo(){
+    public LoginAgentByPassPjo(){
 
     }
 
-    public GlobalbetPjo(String Login, String Password, AuthorizationPjo Authorization){
+    public LoginAgentByPassPjo(String Login, String Password, GlobalBetAuthorizationPjo Authorization){
 
         this.Login = Login;
         this.Password = Password;
         this.Authorization = Authorization;
 
     }
-    public AuthorizationPjo getAuthorization() {
+
+    public GlobalBetAuthorizationPjo getAuthorization() {
         return Authorization;
     }
 
-    public void setAuthorization(AuthorizationPjo authorization) {
+    public void setAuthorization(GlobalBetAuthorizationPjo authorization) {
         Authorization = authorization;
     }
     public String getLogin() {

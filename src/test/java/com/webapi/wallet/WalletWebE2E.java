@@ -58,7 +58,7 @@ public class WalletWebE2E {
         loginToken = loginUser.loginUser();
         //retrieved your balance amount from your wallet table
         MySQLConnection mySQLConnection = new MySQLConnection();
-        Balance =mySQLConnection.getBalance();
+        Balance = mySQLConnection.getBalance();
 
 
         String walletBalanceResponse = given().spec(walletRequestSpecification).

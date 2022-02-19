@@ -16,6 +16,7 @@ public class MySQLConnection<string> {
      static int Balance;
      static long TransactionId;
      static long MSISDN;
+     static String VirtualId;
 
     Connection conBackend = DriverManager.getConnection(DB_BackendAPI, USER, PASS);
     Connection conTpGame = DriverManager.getConnection(DB_TpGame, USER, PASS);
@@ -132,9 +133,18 @@ public class MySQLConnection<string> {
         }
     }
 
+    public String getVirtualId() throws SQLException {
+        //here backend_api is database name, root is username and password
+        Statement stmt=conBackend.createStatement();
+        ResultSet rs=stmt.executeQuery("SELECT * FROM backend_api.user where id = 335");
+        while(rs.next())
+            VirtualId = rs.getString(28);
+        //System.out.println(Balance);
+        return VirtualId;
+    }
     public static void main(String[] args) throws SQLException {
 
         MySQLConnection mySQLConnection = new MySQLConnection();
-        mySQLConnection.getBalance();
+        mySQLConnection.getVirtualId();
     }
 }

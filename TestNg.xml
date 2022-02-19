@@ -30,4 +30,9 @@
             <class name="com.webapi.pickx.PickaxE2E" />
         </classes>
     </test>
+    <test name="Globalbet" >
+        <classes>
+            <class name="com.globalbet.GlobalbetE2E" />
+        </classes>
+    </test>
 </suite>

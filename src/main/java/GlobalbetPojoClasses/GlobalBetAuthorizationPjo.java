@@ -1,13 +1,13 @@
 package GlobalbetPojoClasses;
 
-public class AuthorizationPjo {
+public class GlobalBetAuthorizationPjo {
     private String systemId;
     private String systemPassword;
 
-    public AuthorizationPjo(){
+    public GlobalBetAuthorizationPjo(){
 
     }
-    public AuthorizationPjo(String systemId, String systemPassword){
+    public GlobalBetAuthorizationPjo(String systemId, String systemPassword){
 
         this.systemId = systemId;
         this.systemPassword = systemPassword;
