@@ -1,6 +1,7 @@
-package com.webapi.scratch;
+package com.webapi.user.scratch;
 
 
+import com.common.BaseURI;
 import com.common.LoginUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.builder.RequestSpecBuilder;
@@ -23,15 +24,16 @@ public class scratchE2E {
 
     RequestSpecification requestSpecification;
     ResponseSpecification responseSpecification;
-    String userName;
     String loginToken;
+    BaseURI baseURI = new BaseURI();
+    String BaseURI = baseURI.setBaseURI();
 
     @BeforeClass
     public void beforeClass(){
 
         RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
         ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
-        requestSpecBuilder.setBaseUri("http://172.16.3.33:5003/scratch-api/v1");
+        requestSpecBuilder.setBaseUri("http://"+BaseURI+":5003/scratch-api/v1");
         requestSpecification = requestSpecBuilder.build();
         responseSpecification = responseSpecBuilder.build();
     }

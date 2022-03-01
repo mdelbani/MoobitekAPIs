@@ -23,12 +23,14 @@ public class LoginUser {
     ResponseSpecification responseSpecification;
     public String loginToken;
     public String userName;
+    BaseURI baseURI = new BaseURI();
+    String BaseURI = baseURI.setBaseURI();
 
     public void beforeClass() {
         //this the first executable class, it contains the basic information used for all APIs
         RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
         ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
-        requestSpecBuilder.setBaseUri("http://172.16.3.33:5006/user-api/v1");
+        requestSpecBuilder.setBaseUri("http://"+BaseURI+":5006/user-api/v1");
         requestSpecBuilder.setContentType("application/problem+json; charset=utf-8");
         responseSpecBuilder.expectStatusCode(200);
         requestSpecification = requestSpecBuilder.build();

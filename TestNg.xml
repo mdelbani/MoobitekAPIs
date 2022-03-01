@@ -20,11 +20,6 @@
             <class name="com.webapi.pick3.Pick3WebE2E" />
         </classes>
     </test>
-    <test name="Scratch E2E" >
-        <classes>
-            <class name="com.webapi.scratch.scratchE2E" />
-        </classes>
-    </test>
     <test name="Pick X E2E" >
         <classes>
             <class name="com.webapi.pickx.PickaxE2E" />

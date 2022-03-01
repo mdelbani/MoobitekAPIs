@@ -2,7 +2,9 @@ package MySQLDatabaseConnection;
 
 import java.sql.*;
 
+
 public class MySQLConnection<string> {
+
      static String code;
     //here backend_api is database name, root is username and password
      static final String DB_BackendAPI = "jdbc:mysql://172.16.3.33:3306/backend_api";
@@ -17,14 +19,13 @@ public class MySQLConnection<string> {
      static long TransactionId;
      static long MSISDN;
      static String VirtualId;
+     static int TicketId;
 
     Connection conBackend = DriverManager.getConnection(DB_BackendAPI, USER, PASS);
     Connection conTpGame = DriverManager.getConnection(DB_TpGame, USER, PASS);
 
     public MySQLConnection() throws SQLException {
-        //this is how to decode base64 password
-//        byte[] decodedBytes = Base64.getDecoder().decode(userPassword);
-//        String decodedPassword = new String(decodedBytes);
+
     }
 
     public String getCodeMethod() throws SQLException {
@@ -145,6 +146,34 @@ public class MySQLConnection<string> {
     public static void main(String[] args) throws SQLException {
 
         MySQLConnection mySQLConnection = new MySQLConnection();
-        mySQLConnection.getVirtualId();
+        mySQLConnection.getTicketId();
+        mySQLConnection.deleteTicket();
+    }
+    public int getTicketId() throws SQLException {
+        //here backend_api is database name, root is username and password
+        Statement stmt=conBackend.createStatement();
+        ResultSet rs=stmt.executeQuery("Select * FROM backend_api.globalbet_ticket where globalbet_ticket_id = 100");
+        while(rs.next())
+            TicketId = rs.getInt(1);
+        //System.out.println(Balance);
+        return TicketId;
+    }
+
+    public void deleteTicket() throws SQLException {
+
+
+        String deleteTicketTransaction = "Delete FROM backend_api.globalbet_transaction where ticket_id ="+TicketId;
+        String deleteTicket = "Delete FROM backend_api.globalbet_ticket where globalbet_ticket_id = 100";
+
+        try {
+            Statement stmt = conBackend.createStatement();
+            stmt.executeUpdate(deleteTicketTransaction);
+            stmt.executeUpdate(deleteTicket);
+
+            conBackend.close();
+            System.out.println("All data related to the new created user has been deleted successfully");
+        }catch (Exception e) {
+            System.out.println("something wrong");
+        }
     }
 }

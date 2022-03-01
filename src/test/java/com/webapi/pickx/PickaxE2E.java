@@ -1,5 +1,6 @@
 package com.webapi.pickx;
 
+import com.common.BaseURI;
 import com.common.LoginUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.builder.RequestSpecBuilder;
@@ -22,13 +23,15 @@ public class PickaxE2E {
     RequestSpecification pickXRequestSpecification;
     ResponseSpecification pickCResponseSpecification;
     String loginToken;
+    BaseURI baseURI = new BaseURI();
+    String BaseURI = baseURI.setBaseURI();
 
     @BeforeClass
     public void beforeClass(){
 
         RequestSpecBuilder pickaxRequestSpecBuilder = new RequestSpecBuilder();
         ResponseSpecBuilder pickaxResponseSpecBuilder = new ResponseSpecBuilder();
-        pickaxRequestSpecBuilder.setBaseUri("http://172.16.3.33:5001/pick-x-api/v1");
+        pickaxRequestSpecBuilder.setBaseUri("http://"+BaseURI+":5001/pick-x-api/v1");
         pickaxRequestSpecBuilder.setContentType(ContentType.JSON);
         pickaxResponseSpecBuilder.expectStatusCode(200);
         pickXRequestSpecification = pickaxRequestSpecBuilder.build();

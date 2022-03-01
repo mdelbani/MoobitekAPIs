@@ -1,5 +1,6 @@
 package com.webapi.pick3;
 
+import com.common.BaseURI;
 import com.common.LoginUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.builder.RequestSpecBuilder;
@@ -22,11 +23,13 @@ public class Pick3WebE2E {
     RequestSpecification pick3RequestSpecification;
     ResponseSpecification pick3ResponseSpecification;
     String loginToken;
+    BaseURI baseURI = new BaseURI();
+    String BaseURI = baseURI.setBaseURI();
     @BeforeClass
     public void beforeClass(){
         RequestSpecBuilder pick3RequestBuilder = new RequestSpecBuilder();
         ResponseSpecBuilder pick3ResponseBuilder = new ResponseSpecBuilder();
-        pick3RequestBuilder.setBaseUri("http://172.16.3.33:5002/pick-three-api/v1");
+        pick3RequestBuilder.setBaseUri("http://"+BaseURI+":5002/pick-three-api/v1");
         pick3RequestBuilder.setContentType("application/problem+json; charset=utf-8");
         pick3ResponseBuilder.expectStatusCode(200);
         pick3RequestSpecification = pick3RequestBuilder.build();

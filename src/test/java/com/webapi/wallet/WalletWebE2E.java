@@ -1,6 +1,7 @@
 package com.webapi.wallet;
 
 import MySQLDatabaseConnection.MySQLConnection;
+import com.common.BaseURI;
 import com.common.LoginUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.builder.RequestSpecBuilder;
@@ -32,19 +33,21 @@ public class WalletWebE2E {
     int expectedAmount;
     int amount = 200;
     long msisdn;
+    BaseURI baseURI = new BaseURI();
+    String BaseURI = baseURI.setBaseURI();
 
     @BeforeClass
     public void beforeClass(){
 
         RequestSpecBuilder walletRequestSpecBuilder = new RequestSpecBuilder();
         ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
-        walletRequestSpecBuilder.setBaseUri("http://172.16.3.33:5007/wallet-transaction-api/v1/tokens/");
+        walletRequestSpecBuilder.setBaseUri("http://"+BaseURI+":5007/wallet-transaction-api/v1/tokens/");
         walletRequestSpecBuilder.setContentType("application/problem+json; charset=utf-8");
         responseSpecBuilder.expectStatusCode(200);
         responseSpecBuilder.expectStatusCode(200);
         RequestSpecBuilder TPRequestSpecBuilder = new RequestSpecBuilder();
         ResponseSpecBuilder TPResponseSpecBuilder = new ResponseSpecBuilder();
-        TPRequestSpecBuilder.setBaseUri("http://172.16.3.33:8076/tp");
+        TPRequestSpecBuilder.setBaseUri("http://"+BaseURI+":8076/tp");
         TPResponseSpecBuilder.expectStatusCode(200);
         TPRequestSpecification = TPRequestSpecBuilder.build();
         TPResponseSpecification = TPResponseSpecBuilder.build();

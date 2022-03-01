@@ -2,6 +2,7 @@ package com.webapi.user;
 
 import MySQLDatabaseConnection.MySQLConnection;
 import UserPojoClasses.FetchUser.GetUserInfoPjo;
+import com.common.BaseURI;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import UserPojoClasses.CreateUser.CreateUserPjo;
 import io.restassured.builder.RequestSpecBuilder;
@@ -31,13 +32,15 @@ public class CreateUserE2E {
     CreateUserPjo usersPjo = new CreateUserPjo();
     CreateUserPjo desUsers = new CreateUserPjo();
     CreateUserPjo updateInfoPjo = new CreateUserPjo();
+    BaseURI baseURI = new BaseURI();
+    String BaseURI = baseURI.setBaseURI();
 
     @BeforeClass
     public void beforeClass() {
         //this the first executable class, it contains the basic information used for all APIs
         RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
         ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
-        requestSpecBuilder.setBaseUri("http://172.16.3.33:5006/user-api/v1");
+        requestSpecBuilder.setBaseUri("http://"+BaseURI+":5006/user-api/v1");
         responseSpecBuilder.expectStatusCode(200);
         requestSpecification = requestSpecBuilder.build();
         responseSpecification = responseSpecBuilder.build();
@@ -59,8 +62,8 @@ public class CreateUserE2E {
     public void createWebUser() {
 
         // this test case is to create a new user from web. Pojo class used to serialize the payload body
-        usersPjo = new CreateUserPjo("test", "test", "test@test.com", "96170000000", "mtn", "mmmtest@82",
-                "mmmtest@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mtest", "lebanese",
+        usersPjo = new CreateUserPjo("test", "test", "test@test.com", "22196170000000", "mtn", "mmmtest@82",
+                "mmmtest@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mmtest", "lebanese",
                 "123456", "2024-01-09T20:10:10.709Z", "Rl 1548796", 0, "321547");
 
         // deserialize the json response and convert it to Pojo class
@@ -77,9 +80,6 @@ public class CreateUserE2E {
         userMobileNumber = usersPjo.getMobileNumber();
         //the username variable might be used in case account will be activated by mobile number
         userName = usersPjo.getUsername();
-//        System.out.println("My Token Value is: " + registeredToken);
-//        System.out.println("My Password Value is: " + userPassword);
-//        System.out.println("My Mobile Number Value is: " + userMobileNumber);
     }
 
     @Test( priority = 3)
