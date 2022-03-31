@@ -62,8 +62,8 @@ public class CreateUserE2E {
     public void createWebUser() {
 
         // this test case is to create a new user from web. Pojo class used to serialize the payload body
-        usersPjo = new CreateUserPjo("test", "test", "test@test.com", "22196170000000", "mtn", "mmmtest@82",
-                "mmmtest@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mmtest", "lebanese",
+        usersPjo = new CreateUserPjo("test", "test", "test@test.com", "96170888888", "mtn", "mmmtest@82",
+                "mmmtest@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon", "male", "Mr", "mmmmtest", "lebanese",
                 "123456", "2024-01-09T20:10:10.709Z", "Rl 1548796", 0, "321547");
 
         // deserialize the json response and convert it to Pojo class
@@ -128,8 +128,8 @@ public class CreateUserE2E {
     public void updateUserInfo() throws SQLException, JsonProcessingException {
 
         updateInfoPjo = new CreateUserPjo("test", "test", "test@test.com",
-                "96170000000", "mtn", "test@82",
-                "test@82", "1990-03-02T20:10:10.709Z", "beirut", "lebanon",
+                "96170888888", "mtn", "test@82",
+                "test@82", "1990-03-02T20:10:10.709Z", "beirut", "portugal",
                 "male", "Mr", "mtest", "lebanese",
                 "123456", "2024-01-09T20:10:10.709Z", "Rl 1548796",
                 0, "321547");

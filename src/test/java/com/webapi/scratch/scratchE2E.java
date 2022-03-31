@@ -1,4 +1,4 @@
-package com.webapi.user.scratch;
+package com.webapi.scratch;
 
 
 import com.common.BaseURI;
@@ -62,7 +62,7 @@ public class scratchE2E {
 
         String scratchPurchaseResponse = given().spec(requestSpecification).queryParams(queryParam)
                 .body(scratchPayload).contentType(ContentType.JSON).log().all().
-                when().get("/tokens/9e15e1ea1a2228693fe5b885815f728bdc48ca239dcc9b5a438d6e11dbb4dfdb/tickets").
+                when().get("/tokens/"+loginToken+"/tickets").
                 then().spec(responseSpecification).log().all().extract().response().asString();
 
         JsonPath jsonPath = new JsonPath(scratchPurchaseResponse);

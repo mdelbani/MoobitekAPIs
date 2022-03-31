@@ -3,28 +3,24 @@ package com.globalbet;
 import GlobalbetPojoClasses.*;
 import MySQLDatabaseConnection.MySQLConnection;
 import com.common.BaseURI;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.path.xml.XmlPath;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
 import org.testng.annotations.*;
 
 import java.sql.SQLException;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 
-public class GlobalbetE2E {
+public class GlobalbetCancelTicket {
 
     RequestSpecification globalBetRequestSpecification;
     ResponseSpecification globalBetResponseSpecification;
-    String SubjectSessionId;
-    String Subject;
-    String Login;
-    String Balance;
     String VirtualId;
     String Code;
     String SessionToken;
@@ -37,7 +33,7 @@ public class GlobalbetE2E {
     MySQLConnection mySQLConnection = new MySQLConnection();
     String BaseURI = baseURI.setBaseURI();
 
-    public GlobalbetE2E() throws SQLException {
+    public GlobalbetCancelTicket() throws SQLException {
     }
 
     @BeforeClass
@@ -50,59 +46,7 @@ public class GlobalbetE2E {
         globalBetRequestSpecification = globalBetRequestSpecBuilder.build();
         globalBetResponseSpecification = globalBetResponseSpecBuilder.build();
     }
-    //the below three APIs are for Agent Adapter module
     @Test(priority = 0)
-    public void loginAgentByPassword() throws JsonProcessingException {
-
-        GlobalBetAuthorizationPjo nestedObject = new GlobalBetAuthorizationPjo("virtualsports","systemPwd");
-        LoginAgentByPassPjo mainObject = new LoginAgentByPassPjo("Mojabet-QA","P@ssw0rd", nestedObject);
-
-        String loginAgentByPassword = given().spec(globalBetRequestSpecification).
-                body(mainObject).when().post("/loginagentbypassword").
-                then().spec(globalBetResponseSpecification).extract().response().asString();
-
-        XmlPath xmlPath = new XmlPath(loginAgentByPassword);
-        SubjectSessionId = xmlPath.get("LoginAgentByPasswordResponse.SubjectSessionId");
-        Subject = xmlPath.get("LoginAgentByPasswordResponse.Subject");
-        Login = xmlPath.get("LoginAgentByPasswordResponse.Login");
-
-        assertThat(mainObject.getLogin(), equalTo(Subject));
-        System.out.println("Agent Logged In Successfully");
-    }
-    @Test(priority = 1)
-    public void getAgentBalance(){
-
-        GlobalBetAuthorizationPjo authorizationGetBalancePjo = new GlobalBetAuthorizationPjo("virtualsports","systemPwd");
-        GetAgentBalance getAgentBalance = new GetAgentBalance(SubjectSessionId,Subject,authorizationGetBalancePjo);
-
-        String response = given().spec(globalBetRequestSpecification).body(getAgentBalance).
-                when().post("/getagentbalance").
-                then().spec(globalBetResponseSpecification).extract().response().asString();
-
-        XmlPath xmlPath = new XmlPath(response);
-        Balance = xmlPath.get("GetAgentBalanceResponse.Balance");
-
-        assertThat(Balance, equalTo("0"));
-        System.out.println("get Agent API works fine");
-    }
-    @Test(priority = 2)
-    public void loadAgentTree(){
-
-        GlobalBetAuthorizationPjo authorizationGetBalancePjo = new GlobalBetAuthorizationPjo("virtualsports","systemPwd");
-        GetAgentTree getAgentTree = new GetAgentTree(SubjectSessionId,Subject,authorizationGetBalancePjo);
-
-        String responseTree = given().spec(globalBetRequestSpecification).body(getAgentTree).
-                when().post("/loadagenttree").
-                then().spec(globalBetResponseSpecification).extract().response().asString();
-
-        XmlPath xmlPath = new XmlPath(responseTree);
-        String fullName = xmlPath.get("LoadAgentTreeResponse.Agent.SubAgents.Agent.FullName");
-
-        assertThat(fullName, equalTo("www.mojabet.co.tz"));
-        System.out.println("load agent tree succeed");
-    }
-    // The below APIs are for Authentication & User Management
-    @Test(priority = 3)
     public void generateCode() throws SQLException {
 
         MySQLConnection mySQLConnection = new MySQLConnection();
@@ -111,9 +55,9 @@ public class GlobalbetE2E {
         Code = given().baseUri("http://172.16.3.33:5013/globalbet-api/v1").queryParam("playerid",VirtualId)
                 .when().get("/generatecode").then().spec(globalBetResponseSpecification).extract().response().asString();
         System.out.println("This is the player id: "+VirtualId);
-        System.out.println("This is the generared code: "+Code);
+        System.out.println("This is the generated code: "+Code);
     }
-    @Test(priority = 4)
+    @Test(priority = 1)
     public void authenticatePlayerByCode(){
 
         GlobalBetAuthorizationPjo globalBetAuthorizationPjo = new GlobalBetAuthorizationPjo("virtualsports","systemPwd");
@@ -130,7 +74,7 @@ public class GlobalbetE2E {
         assertThat(PlayerLogin, equalTo(VirtualId));
         System.out.println("Player authenticated successfully and the following is the session token: "+SessionToken);
     }
-    @Test(priority = 5)
+    @Test(priority = 2)
     public void getBalance() throws SQLException {
 
         MySQLConnection mySQLConnection = new MySQLConnection();
@@ -149,31 +93,31 @@ public class GlobalbetE2E {
         System.out.println("Balance retrieved successfully : "+playerExpectedBalance);
     }
     //the below APIs are for open tickets & add to wallet
-    @Test(priority = 6)
+    @Test(priority = 3)
     public void openTicket(){
 
         GlobalBetAuthorizationPjo globalBetAuthorizationPjo = new GlobalBetAuthorizationPjo("virtualsports","systemPwd");
-        OpenTicketRequest openTicketRequest = new OpenTicketRequest(VirtualId,SessionToken,100,200,"TSZ",globalBetAuthorizationPjo);
+        OpenTicketRequest openTicketRequest = new OpenTicketRequest(VirtualId,SessionToken,100,200,"TZS",globalBetAuthorizationPjo);
 
-       String openTicketResponse = given().spec(globalBetRequestSpecification).body(openTicketRequest)
-               .when().post("/openTicket").then().extract().response().asString();
+        String openTicketResponse = given().spec(globalBetRequestSpecification).body(openTicketRequest)
+                .when().post("/openTicket").then().extract().response().asString();
 
-       XmlPath xmlPath = new XmlPath(openTicketResponse);
-       ticketNumber = openTicketRequest.getTicketNumber();
-       Stake = openTicketRequest.getStake();
-       String externalTicketId = xmlPath.get("OpenTicketRequest.ExternalTicketId");
+        XmlPath xmlPath = new XmlPath(openTicketResponse);
+        ticketNumber = openTicketRequest.getTicketNumber();
+        Stake = openTicketRequest.getStake();
+        String externalTicketId = xmlPath.get("OpenTicketResponse.ExternalTicketId");
 
-       assertThat(externalTicketId, containsString(String.valueOf(ticketNumber)));
-       System.out.println("Ticket purchased successfully");
+        assertThat(externalTicketId, containsString(String.valueOf(ticketNumber)));
+        System.out.println("Ticket purchased successfully");
     }
-    @Test(priority = 7)
+    @Test(priority = 4)
     public void cancelTicket() throws SQLException {
 
         GlobalBetAuthorizationPjo globalBetAuthorizationPjo = new GlobalBetAuthorizationPjo("virtualsports","systemPwd");
-        CancelTicketPjo cancelTicketPjo = new CancelTicketPjo(VirtualId,SessionToken,100,200,"TSZ",globalBetAuthorizationPjo);
+        CancelTicketPjo cancelTicketPjo = new CancelTicketPjo(VirtualId,SessionToken,100,200,"TZS",globalBetAuthorizationPjo);
 
         String cancelResponse = given().spec(globalBetRequestSpecification).body(cancelTicketPjo)
-                .when().post("/cancelTicket").then().log().all().extract().response().asString();
+                .when().post("/cancelTicket").then().extract().response().asString();
 
         XmlPath xmlPath = new XmlPath(cancelResponse);
         playerExpectedBalance = xmlPath.get("CancelTicketResponse.Balance");
@@ -181,11 +125,7 @@ public class GlobalbetE2E {
         assertThat(playerExpectedBalance, equalTo(PlayerBalance));
         System.out.println("Ticket Cancelled & Balance retrieved successfully : "+playerExpectedBalance);
 
-        mySQLConnection.getTicketId();
-        mySQLConnection.deleteTicket();
+//        mySQLConnection.getTicketId();
+//        mySQLConnection.deleteTicket();
     }
-
-
-
-
 }

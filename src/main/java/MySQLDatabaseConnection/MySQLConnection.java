@@ -20,6 +20,7 @@ public class MySQLConnection<string> {
      static long MSISDN;
      static String VirtualId;
      static int TicketId;
+     static String TicketStatus;
 
     Connection conBackend = DriverManager.getConnection(DB_BackendAPI, USER, PASS);
     Connection conTpGame = DriverManager.getConnection(DB_TpGame, USER, PASS);
@@ -31,7 +32,7 @@ public class MySQLConnection<string> {
     public String getCodeMethod() throws SQLException {
 
         Statement stmt=conBackend.createStatement();
-        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170000000");
+        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170888888");
         while(rs.next())
         code = rs.getString(3);
         conBackend.close();
@@ -41,7 +42,7 @@ public class MySQLConnection<string> {
     public int getUserIdMethod() throws SQLException {
         //here backend_api is database name, root is username and password
         Statement stmt=conBackend.createStatement();
-        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170000000");
+        ResultSet rs=stmt.executeQuery("select * from backend_api.mobile_number where mobile_number = 22196170888888");
         while(rs.next())
         UserId = rs.getInt(1);
         //System.out.println(UserId);;
@@ -51,7 +52,7 @@ public class MySQLConnection<string> {
     public int getPlayerId() throws SQLException {
         //here backend_api is database name, root is username and password
         Statement stmt=conTpGame.createStatement();
-        ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170000000");
+        ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170888888");
         while(rs.next())
         PlayerId = rs.getInt(1);
         //System.out.println(PlayerId);
@@ -61,7 +62,7 @@ public class MySQLConnection<string> {
     public int getMSISDN() throws SQLException {
         //here backend_api is database name, root is username and password
         Statement stmt=conTpGame.createStatement();
-        ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170000000");
+        ResultSet rs=stmt.executeQuery("select * FROM tpgame.participant where msisdn = 22196170888888");
         while(rs.next())
             MSISDN = rs.getLong(1);
         //System.out.println(PlayerId);
@@ -101,7 +102,8 @@ public class MySQLConnection<string> {
     public int getTransactionId() throws SQLException {
         //here backend_api is database name, root is username and password
         Statement stmt=conTpGame.createStatement();
-        ResultSet rs=stmt.executeQuery("SELECT * FROM tpgame.momo_funds_transaction where msisdn = 22196170824488 order by date_created desc");
+        ResultSet rs=stmt.executeQuery("SELECT * FROM tpgame.momo_funds_transaction where msisdn = 22196170824488 " +
+                "order by date_created desc");
         while(rs.next())
             TransactionId = rs.getLong(12);
         //System.out.println(Balance);
@@ -137,7 +139,7 @@ public class MySQLConnection<string> {
     public String getVirtualId() throws SQLException {
         //here backend_api is database name, root is username and password
         Statement stmt=conBackend.createStatement();
-        ResultSet rs=stmt.executeQuery("SELECT * FROM backend_api.user where id = 335");
+        ResultSet rs=stmt.executeQuery("SELECT * FROM backend_api.user where id = 394");
         while(rs.next())
             VirtualId = rs.getString(28);
         //System.out.println(Balance);
@@ -146,8 +148,7 @@ public class MySQLConnection<string> {
     public static void main(String[] args) throws SQLException {
 
         MySQLConnection mySQLConnection = new MySQLConnection();
-        mySQLConnection.getTicketId();
-        mySQLConnection.deleteTicket();
+        mySQLConnection.getBalance();
     }
     public int getTicketId() throws SQLException {
         //here backend_api is database name, root is username and password
@@ -159,19 +160,30 @@ public class MySQLConnection<string> {
         return TicketId;
     }
 
+    public String getTicketStatus() throws SQLException {
+        //here backend_api is database name, root is username and password
+        Statement stmt=conBackend.createStatement();
+        ResultSet rs=stmt.executeQuery("Select * FROM backend_api.globalbet_ticket where globalbet_ticket_id = 200");
+        while(rs.next())
+            TicketStatus = rs.getString(13);
+        //System.out.println(Balance);
+        return TicketStatus;
+    }
+
     public void deleteTicket() throws SQLException {
 
 
         String deleteTicketTransaction = "Delete FROM backend_api.globalbet_transaction where ticket_id ="+TicketId;
-        String deleteTicket = "Delete FROM backend_api.globalbet_ticket where globalbet_ticket_id = 100";
+        String deleteTicketId = "Delete FROM backend_api.globalbet_ticket where globalbet_ticket_id ="+TicketId;
 
         try {
             Statement stmt = conBackend.createStatement();
+            stmt.executeUpdate(deleteTicketId);
             stmt.executeUpdate(deleteTicketTransaction);
-            stmt.executeUpdate(deleteTicket);
+            //Thread.sleep(1000);
 
             conBackend.close();
-            System.out.println("All data related to the new created user has been deleted successfully");
+            System.out.println("All data related to the new created Ticket has been deleted successfully");
         }catch (Exception e) {
             System.out.println("something wrong");
         }

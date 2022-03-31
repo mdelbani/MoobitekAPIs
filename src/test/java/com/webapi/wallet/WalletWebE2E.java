@@ -12,6 +12,7 @@ import io.restassured.specification.ResponseSpecification;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -29,8 +30,8 @@ public class WalletWebE2E {
     String userPassword;
     String userName;
     String loginToken;
-    int Balance;
-    int expectedAmount;
+    BigDecimal Balance;
+    BigDecimal expectedAmount;
     int amount = 200;
     long msisdn;
     BaseURI baseURI = new BaseURI();
@@ -61,14 +62,14 @@ public class WalletWebE2E {
         loginToken = loginUser.loginUser();
         //retrieved your balance amount from your wallet table
         MySQLConnection mySQLConnection = new MySQLConnection();
-        Balance = mySQLConnection.getBalance();
+        Balance = BigDecimal.valueOf(mySQLConnection.getBalance());
 
 
         String walletBalanceResponse = given().spec(walletRequestSpecification).
                 when().get(loginToken+"/wallets").then().extract().response().asString();
 
         JsonPath jsonPath = new JsonPath(walletBalanceResponse);
-        expectedAmount = jsonPath.getInt("amount");
+        expectedAmount = BigDecimal.valueOf(jsonPath.getInt("amount"));
         String walletMessage = jsonPath.getString("message");
 
         assertThat(expectedAmount, equalTo(Balance));

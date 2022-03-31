@@ -27,7 +27,7 @@
     </test>
     <test name="Globalbet" >
         <classes>
-            <class name="com.globalbet.GlobalbetE2E" />
+            <class name="com.globalbet.GlobalbetAgentE2E" />
         </classes>
     </test>
 </suite>
